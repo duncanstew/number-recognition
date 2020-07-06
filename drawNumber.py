@@ -2,8 +2,9 @@ import pygame
 from PIL import Image, ImageOps
 import cv2
 import numpy as np
+import tkinter as tk
+from tkinter import messagebox
 
-import time
 
 from keras.models import load_model
 
@@ -39,6 +40,17 @@ def resize(image):
     finImage = np.reshape(imgGray,(1,784))
     return finImage
 
+def message_box(subject, content):
+    root = tk.Tk()
+    root.attributes("-topmost", True)
+    root.withdraw()
+
+    msg = 'I predict your number to be ' + str(content)
+    messagebox.showinfo(subject, msg)
+    try:
+        root.destroy()
+    except:
+        pass
 
 
 def main():
@@ -72,8 +84,10 @@ def main():
                     image = resize('screenshot.jpg')
                     new_model = load_model('model.h5')
                     prediction = new_model.predict(image)
-                    msg = np.argmax(prediction, axis=1)
-                    print('I predict this number to be ' + str(msg))
+
+                    num = np.argmax(prediction, axis=1)
+                    guess = num[0]
+                    message_box('Guess', guess)
                     window.fill(WHITE)
                 if event.key == pygame.K_q:
                     run = False
